@@ -87,4 +87,4 @@ def test_on_image(model, path, device):
 
     normal_map = (normal_map - normal_map.min()) / (normal_map.max() - normal_map.min())  # Normalize to [0, 1]
     normal_map = (normal_map * 255).astype(np.uint8)  # Convert to uint8
-    cv2.imwrite(f"result/normal_map.png", normal_map)
+    cv2.imwrite(f"result/scholar.png", normal_map)

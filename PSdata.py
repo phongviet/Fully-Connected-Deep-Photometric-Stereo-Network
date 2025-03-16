@@ -15,21 +15,20 @@ def process_image_data(data_dir):
                 image_path = os.path.join(label_path, image_name)
                 if os.path.isfile(image_path):
                     img = cv2.imread(image_path)
-                    img = cv2.resize(img, (512, 512))
                     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                     batch.append(img)
-            X.append(np.asarray(batch))
+            batch = np.array(batch)  # Convert batch to a NumPy array
+            X.append(batch.transpose(1, 2, 0).reshape(-1, 20))
         else:
             img = cv2.imread(label_path)
-            img = cv2.resize(img, (512, 512))
-            y.append(img)
-    return np.asarray(X), np.asarray(y)
+            y.append(img.reshape(-1, 3))
+    X = np.vstack(X)  # Stack all batches vertically
+    y = np.vstack(y)  # Stack all labels vertically
+    return X, y
 
 class PSDataset(Dataset):
     def __init__(self, data_dir, device):
         self.X, self.y = process_image_data(data_dir)
-        self.X = self.X.transpose(0, 2, 3, 1).reshape(-1, 20)
-        self.y = self.y.reshape(-1, 3)
         self.X = torch.tensor(self.X, dtype=torch.float32).to(device)
         self.y = torch.tensor(self.y, dtype=torch.float32).to(device)
 
