@@ -59,7 +59,7 @@ def test(model, test_loader, criterion, device):
     return test_loss / len(test_loader)
 
 
-def test_on_image(model, path, device):
+def test_on_image(model, in_path, out_path, device):
     model.eval()
     transform = transforms.Compose([
         transforms.ToTensor(),
@@ -68,8 +68,8 @@ def test_on_image(model, path, device):
     ])
 
     images = []
-    for img_name in os.listdir(path):
-        img_path = os.path.join(path, img_name)
+    for img_name in os.listdir(in_path):
+        img_path = os.path.join(in_path, img_name)
         img = cv2.imread(img_path)
         img = transform(img).unsqueeze(0)  # Add batch dimension
         images.append(img)
@@ -87,4 +87,5 @@ def test_on_image(model, path, device):
 
     normal_map = (normal_map - normal_map.min()) / (normal_map.max() - normal_map.min())  # Normalize to [0, 1]
     normal_map = (normal_map * 255).astype(np.uint8)  # Convert to uint8
-    cv2.imwrite(f"result/scholar.png", normal_map)
+    cv2.imwrite(out_path, normal_map)
+    return normal_map
